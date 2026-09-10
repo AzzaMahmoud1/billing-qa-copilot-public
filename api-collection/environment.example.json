@@ -1,0 +1,11 @@
+{
+  "name": "Billing API — environment (TEMPLATE; copy to environment.json and fill locally)",
+  "values": [
+    { "key": "baseUrl", "value": "", "type": "default", "enabled": true },
+    { "key": "token", "value": "", "type": "secret", "enabled": true },
+    { "key": "customerNin", "value": "", "type": "default", "enabled": true },
+    { "key": "serviceId", "value": "", "type": "default", "enabled": true }
+  ],
+  "_postman_variable_scope": "environment",
+  "_comment": "Never commit real values. Copy this to api-collection/environment.json (gitignored) and fill baseUrl/token there."
+}

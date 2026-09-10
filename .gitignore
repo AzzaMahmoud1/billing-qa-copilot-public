@@ -1,0 +1,26 @@
+# --- PUBLIC-repo safety note ---
+# knowledge-base/_private/ (the real-name map + HO provenance) is intentionally TRACKED in the PRIVATE
+# repo — it is part of the full private copy. The PUBLIC build is produced by tools/sanitize.py, which
+# REMOVES _private/ and placeholderises real names, then fails a release gate on any leak. Do NOT commit
+# this private tree to a public remote; publish only the sanitize.py output. See SANITIZATION.md.
+
+# Real Postman environment (holds baseUrl/token) — never commit
+api-collection/environment.json
+*.env
+
+# Raw handover artifacts (never commit the source doc / transcript / screenshots)
+*.docx
+ho_extract/
+raw-ho/
+
+# Python / tooling
+__pycache__/
+*.pyc
+dist-public/
+../billing-qa-copilot-public/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

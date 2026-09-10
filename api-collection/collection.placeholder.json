@@ -1,0 +1,29 @@
+{
+  "info": {
+    "name": "Billing API — PLACEHOLDER (replace with your Postman v2.1 export)",
+    "_postman_id": "00000000-0000-0000-0000-000000000000",
+    "description": "Empty-but-valid skeleton. Folders should be named after KB capability ids (create-invoice, zatca-reporting, sadad-upload, refund-and-credit-memo, points-redemption, proxy-3rd-party-billing) so the agent can join a routed story to the matching request. See README.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "create-invoice",
+      "description": "Maps to how-to-verify/create-invoice.md. Put the real Create Invoice request here.",
+      "item": [
+        {
+          "name": "Create Invoice (example request — fill in)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/<path>", "host": ["{{baseUrl}}"], "path": ["<path>"] },
+            "body": { "mode": "raw", "raw": "{ \"customerNin\": \"\", \"serviceId\": \"\", \"Volume\": 0, \"UnitPrice\": 0, \"Amount\": 0 }" }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "{{baseUrl}}" }
+  ]
+}
