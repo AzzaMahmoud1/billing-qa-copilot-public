@@ -33,10 +33,15 @@ runnable request — it never changes the DB/screen routing.
 
 ## Files here
 
-- `collection.placeholder.json` — an empty-but-valid v2.1 skeleton showing the expected shape. Replace
-  it with your real export (or keep it alongside as a template).
+- `collection.placeholder.json` — an empty-but-valid v2.1 skeleton showing the expected shape.
+- `collection.example.json` — a small **synthetic** collection (placeholders only) that demonstrates
+  the folder→capability / request→endpoint / example→case conventions. Safe to publish; this is what
+  the **public** build ships.
+- `collection.json` — *(private repo only)* the **real** export. It is **excluded from the public
+  build** by `tools/sanitize.py`, so the live API surface never goes public. Drop your real export here.
 - `environment.example.json` — a template with placeholder variables only. Copy to `environment.json`
   and fill real values locally (that copy is gitignored).
 
-> **Secrets rule:** real tokens/URLs live only in the gitignored `environment.json`. Nothing secret
-> enters either the private or the public repo.
+> **Secrets rule:** real tokens/URLs live only in the gitignored `environment.json`. The real
+> `collection.json` stays in the private repo; the public repo carries only `collection.example.json`.
+> Nothing secret enters either repo.

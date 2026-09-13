@@ -27,6 +27,7 @@ python tools/sanitize.py --check ../billing-qa-copilot-public
 | `*{{internalHost}}` hosts | `{{internalHost}}` |
 | `knowledge-base/_private/` | **removed** |
 | `api-collection/environment.json` | **removed** (gitignored anyway) |
+| `api-collection/collection.json` (real export) | **removed** — public ships `collection.example.json` (synthetic) instead |
 
 Examples already use synthetic identifiers, so they need no change — only verification.
 

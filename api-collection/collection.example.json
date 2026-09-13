@@ -1,0 +1,98 @@
+{
+  "info": {
+    "_postman_id": "00000000-0000-4000-8000-000000000000",
+    "name": "EBS API — EXAMPLE (synthetic, non-production)",
+    "description": "Illustrative example of the EBS collection shape for the public build. ALL data here is synthetic (placeholders / {{vars}} / <SAMPLE_INVOICE_NO>). It exists to demonstrate the ingest contract — folder -> capability, request -> endpoint, saved example -> a case, {{var}} -> environment — NOT to expose the real API surface. The real collection is maintained privately and is excluded from this build. Supply your own real export as api-collection/collection.json plus a gitignored environment.json.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "create-invoice",
+      "description": "Maps to how-to-verify/create-invoice.md",
+      "item": [
+        {
+          "name": "Generate invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/billing/v3/api/invoice/generateinvoice",
+              "host": ["{{baseUrl}}"],
+              "path": ["billing", "v3", "api", "invoice", "generateinvoice"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"CustomerNIN\": \"{{customerNin}}\",\n  \"IsRealTime\": 1,\n  \"Subscriptions\": [\n    { \"ServiceId\": \"example-service\", \"Description\": \"Example line item\", \"UnitPrice\": 100, \"Volume\": 1 }\n  ]\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created (example, synthetic)",
+              "code": 201,
+              "status": "Created",
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"InvoiceNo\": \"<SAMPLE_INVOICE_NO>\",\n  \"Status\": \"ISSUED\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sadad-upload",
+      "description": "Maps to how-to-verify/sadad-upload.md. Real requests carry a WS-Security signed SOAP envelope (X.509 cert + signature) — omitted here on purpose; this only shows the payload shape.",
+      "item": [
+        {
+          "name": "Notify payment (SOAP shape only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "text/xml; charset=utf-8" },
+              { "key": "SOAPAction", "value": "NotifyPayment" }
+            ],
+            "url": {
+              "raw": "{{internalHost}}/sadad/NotifyPayment",
+              "host": ["{{internalHost}}"],
+              "path": ["sadad", "NotifyPayment"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soapenv:Header>\n    <!-- WS-Security header (X.509 BinarySecurityToken + Signature) omitted in this example -->\n  </soapenv:Header>\n  <soapenv:Body>\n    <ns1:NotifyPaymentRq xmlns:ns1=\"urn:example\">\n      <ns1:BillerId>{{billerId}}</ns1:BillerId>\n      <ns1:CurAmt>100.00</ns1:CurAmt>\n      <ns2:BillNumber xmlns:ns2=\"urn:example\">{{billNumber}}</ns2:BillNumber>\n    </ns1:NotifyPaymentRq>\n  </soapenv:Body>\n</soapenv:Envelope>"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "refund-and-credit-memo",
+      "description": "Maps to how-to-verify/refund-and-credit-memo.md",
+      "item": [
+        {
+          "name": "Create refund",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/billing/v3/api/refund",
+              "host": ["{{baseUrl}}"],
+              "path": ["billing", "v3", "api", "refund"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"InvoiceNo\": \"<SAMPLE_INVOICE_NO>\",\n  \"Amount\": 100,\n  \"Reason\": \"example refund\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "{{internalHost}}" },
+    { "key": "token", "value": "{{token}}" },
+    { "key": "customerNin", "value": "0000000000" },
+    { "key": "billerId", "value": "000" },
+    { "key": "billNumber", "value": "000000000000" }
+  ]
+}
