@@ -3,6 +3,38 @@
 The knowledge base is a **living** asset. Record every domain fact added/changed (with its fidelity
 label) and every sanitization/structure change.
 
+## [Unreleased] — 2026-09-15 — Rabet catalog: full execution, eligibility mechanism, source verification
+### Changed / corrected
+- **Endpoint correction:** services live at `GET /api/service/list/{packageId?}` (route param) per OBS-11391 — the earlier `/service/details` notes were the wrong endpoint. `/service/list` returns `priceListItems[]` (retracts the "no priceListItems" finding).
+- **Eligibility mechanism found:** `EnableRabetInquiry` is a **row** in `{{TBL_SETTING}}` (`SET_CODE`/`SET_VALUE 1|0`/`SET_REFERENCE`=product), and it is **enforced** — product `992` (flag=1, 0 packages) → `1193` (eligible-but-empty) vs `199` (no flag) → `1005` (not eligible). Corrects the old "flag not in BPQA / eligibility is 3scale-only". Matches the use-case Pre-Condition. `999` works legacy (no flag row).
+### Verified against source (Confluence BIL/264631311 + 3 use-case docs, ticket comments)
+- Exception flows are explicit: **E2→Empty Package List, E3→Empty Services List, E4→Empty Price List Items** (empty arrays, not errors). API returns errors (`1193`/`1191`/omission) → **confirmed defects**.
+- Field-name mismatch spans Product **and** Package/Service (`Code/EnglishName` vs `packageCode/serviceEnglishName`); `isQuantitative`(0/1) vs API `amountMultiplied`(0/1/2); `PriceListCreationDate` presence unverified.
+- OBS-8527 / OBS-11391: 0 comments, 0 attachments.
+### Jira (authorized writes)
+- 12 execution comments on OBS-11681…11692; bugs **OBS-11693** (E3), **OBS-11694** (input msgs/E1), **OBS-11695** (E4), **OBS-11696** (field names), **OBS-11697** (E2/TC-008) — each Blocks plan OBS-11680 + links its case. Correction comments on TC-005/TC-008/E4/field-names.
+### Gaps still pending live execution
+- `PriceListCreationDate`, `isQuantitative`/`amountMultiplied` value-set, VAT inheritance, "items limit on API", dynamic-services→E4, TC-005 flag-toggle, TC-006 non-Rabet caller.
+
+## [Unreleased] — 2026-09-14 — Rabet Get Product Catalog Details
+### Added
+- `knowledge-base/rabet-product-catalog.md` — the Rabet catalog (OBS-UC086A/B/C) is three endpoints
+  (`product/list`, `package/list`, `service/details`), Rabet-only, keyed by `Product_Code`; inputs, response
+  shape, known product codes/services, credentials location (sheet, secret not copied), and QA findings.
+### QA findings (2026-09-14)
+- **`EnableRabetInquiry` flag is not in the BPQA schema yet** (no `%RABET%`/`%INQUIR%` column) → no eligible
+  product → happy-path + empty-array flows BLOCKED. Flag stories OBS-8612/ELMX-7741 Open; API story OBS-8527 Development.
+- Rabet app-Id `{{rabetAppId}}` authenticates at the gateway; but normal billing creds also return data → **"only Rabet"
+  restriction not yet enforced**.
+- Error-message mismatches vs spec: "ProductCode is missing in request Header" (want "ProductCode is required");
+  "The Application Not Exists" (want "ProductCode does not exist").
+- Test plan **OBS-11680** + cases **OBS-11681…OBS-11692** created for this use case.
+### QA findings (2026-09-14, cont.) — TC-011/012 executed
+- Created empty package `QA-RABET-EMPTY-011` (PACKAGE_ID 989) on product 999 in BPQA (authorized DB write) to unblock TC-011.
+- **TC-011 NOT-EVIDENCED / not exercisable:** the Services endpoint has **no package filter** — `Package_ID` as header/query is ignored (returns all services), and `/service/details/{code}` reads the path segment as a *service* code (`1190 "Service does not exist under this product."`). `GetServiceByPackageV3` in the collection is an unconfigured stub (URL = `/package/list`). → **spec-vs-impl gap** vs OBS-UC086C ("Package_ID optional, null = all").
+- **TC-012 executed:** empty price list (service `NEWFARESSSS`, 0 price rows) returns an **error** `1007 "The Price List Not Exists - {0}"`, not an empty collection; priced control `Test_PD-UMRH-009` returns `priceListId 40016`. Disposition (error vs empty) pending OBS-11692 AC. Also: the `{0}` placeholder in message 1007 is **unresolved** (formatting defect).
+- `knowledge-base/rabet-product-catalog.md` updated with endpoint mechanics (service/details, service/{code}, /pricelist) and findings F4–F6.
+
 ## [Unreleased] — 2026-09-13 — API collection wired
 ### Added
 - `api-collection/collection.json` — the real Postman export **"Elm Billing System (EBS)"**

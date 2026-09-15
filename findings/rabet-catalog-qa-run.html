@@ -1,0 +1,248 @@
+<title>Rabet Catalog QA Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#f3f5f8; --surface:#ffffff; --surface-2:#eef1f6; --line:#dde2ea;
+  --ink:#151a23; --muted:#5c6675; --faint:#8a94a3;
+  --accent:#2f6feb; --accent-soft:#e7eefb;
+  --pass:#1f9d57; --pass-bg:#e6f5ec;
+  --fail:#d0353f; --fail-bg:#fbe9ea;
+  --warn:#b9770f; --warn-bg:#f8f0dd;
+  --mono-bg:#f7f9fc; --mono-ink:#26303f; --tok:#2f6feb; --tok2:#1f9d57; --tok3:#b9770f;
+  --shadow:0 1px 2px rgba(20,30,50,.06),0 6px 20px rgba(20,30,50,.05);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0d1117; --surface:#151b24; --surface-2:#1b222d; --line:#28313d;
+  --ink:#e7ebf2; --muted:#9aa4b3; --faint:#6b7686;
+  --accent:#5f92f6; --accent-soft:#1a2740;
+  --pass:#3ecb7f; --pass-bg:#12271d; --fail:#f0616b; --fail-bg:#2c1518; --warn:#e2a53a; --warn-bg:#2b2210;
+  --mono-bg:#0f151d; --mono-ink:#c6d0dd; --tok:#7fa6ff; --tok2:#3ecb7f; --tok3:#e2a53a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --ground:#0d1117; --surface:#151b24; --surface-2:#1b222d; --line:#28313d;
+  --ink:#e7ebf2; --muted:#9aa4b3; --faint:#6b7686;
+  --accent:#5f92f6; --accent-soft:#1a2740;
+  --pass:#3ecb7f; --pass-bg:#12271d; --fail:#f0616b; --fail-bg:#2c1518; --warn:#e2a53a; --warn-bg:#2b2210;
+  --mono-bg:#0f151d; --mono-ink:#c6d0dd; --tok:#7fa6ff; --tok2:#3ecb7f; --tok3:#e2a53a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;padding-block:36px;padding-inline:20px;}
+h1,h2,h3{text-wrap:balance;line-height:1.15;margin:0;}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
+.eyebrow{font:600 12px/1 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
+header h1{font-size:clamp(28px,5vw,42px);font-weight:700;letter-spacing:-.02em;margin:.5rem 0 .35rem;}
+.sub{color:var(--muted);font-size:15px;max-width:64ch;}
+.meta{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:18px;}
+.chip{display:inline-flex;align-items:center;gap:7px;font:500 12.5px/1 "IBM Plex Mono",monospace;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);}
+.chip b{color:var(--ink);font-weight:600;}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:26px 0 8px;}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.tile .n{font:700 34px/1 "IBM Plex Sans",sans-serif;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+.tile .l{font-size:12.5px;color:var(--muted);margin-top:6px;}
+.tile.pass .n{color:var(--pass)} .tile.fail .n{color:var(--fail)} .tile.ne .n{color:var(--warn)} .tile.total .n{color:var(--ink)}
+section{margin-top:40px;}
+.sec-h{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:18px;}
+.sec-h h2{font-size:20px;font-weight:600;letter-spacing:-.01em;}
+.sec-h .k{font:600 12px/1 "IBM Plex Mono",monospace;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-left:auto;}
+.callout{border-radius:12px;padding:16px 18px;font-size:14.5px;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);background:var(--accent-soft);}
+.callout.win{border-color:color-mix(in srgb,var(--pass) 45%,transparent);background:var(--pass-bg);}
+.callout b{color:var(--ink);}
+.rows{display:flex;flex-direction:column;gap:12px;}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow);border-left:4px solid var(--line);}
+.row.pass{border-left-color:var(--pass)} .row.fail{border-left-color:var(--fail)} .row.ne{border-left-color:var(--warn)}
+.row-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+.tc{font:600 12.5px/1 "IBM Plex Mono",monospace;color:var(--muted);background:var(--surface-2);border-radius:6px;padding:6px 8px;white-space:nowrap;}
+.row-title{font-weight:600;font-size:15px;flex:1;min-width:min(100%,240px);}
+.verdict{font:600 11.5px/1 "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;padding:6px 10px;border-radius:999px;white-space:nowrap;}
+.verdict.pass{color:var(--pass);background:var(--pass-bg)} .verdict.fail{color:var(--fail);background:var(--fail-bg)} .verdict.ne{color:var(--warn);background:var(--warn-bg)}
+.ep{font:500 12.5px/1.4 "IBM Plex Mono",monospace;color:var(--accent);margin:11px 0 10px;word-break:break-all;}
+.ev{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13.5px;}
+.ev dt{color:var(--faint);font:600 11px/1.5 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;padding-top:2px;}
+.ev dd{margin:0;color:var(--ink);}
+.note{font-size:13px;color:var(--muted);margin-top:10px;padding-left:12px;border-left:2px solid var(--line);}
+.tagbug{display:inline-block;font:600 11px/1 "IBM Plex Mono",monospace;color:var(--fail);background:var(--fail-bg);border-radius:5px;padding:4px 7px;margin-top:10px;}
+/* tool "screenshot" panels */
+.tool{border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);margin-top:14px;background:var(--surface);}
+.tool-cap{font:600 12px/1.3 "IBM Plex Mono",monospace;color:var(--faint);margin:20px 0 0;letter-spacing:.02em;}
+.tbar{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface-2);border-bottom:1px solid var(--line);font:600 12px/1 "IBM Plex Mono",monospace;color:var(--muted);}
+.tbar .app{color:var(--ink);} .tbar .sp{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.st{font:600 11px/1 "IBM Plex Mono",monospace;padding:4px 8px;border-radius:6px;background:var(--pass-bg);color:var(--pass);}
+.turl{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);font:500 12.5px/1.4 "IBM Plex Mono",monospace;align-items:center;flex-wrap:wrap;}
+.verb{font-weight:700;color:var(--pass);} .turl .u{color:var(--accent);word-break:break-all;}
+.tbody{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;background:var(--mono-bg);color:var(--mono-ink);padding:12px 14px;overflow-x:auto;white-space:pre;}
+.k{color:var(--tok)} .s{color:var(--tok2)} .e{color:var(--fail);font-weight:600}
+/* SSMS grid */
+.grid{width:100%;border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:12.5px;}
+.grid th{text-align:left;background:var(--surface-2);color:var(--muted);font-weight:600;padding:8px 12px;border-bottom:1px solid var(--line);}
+.grid td{padding:7px 12px;border-bottom:1px solid var(--line);color:var(--ink);}
+.grid tr:nth-child(even) td{background:color-mix(in srgb,var(--surface-2) 45%,transparent);}
+.grid .hi td{background:var(--pass-bg);font-weight:600;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);}
+.card + .card{margin-top:12px;} .card h3{font-size:15px;font-weight:600;margin-bottom:6px;} .card p{margin:0;color:var(--muted);font-size:14px;}
+ul.clean{margin:8px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:10px;}
+ul.clean li{padding-left:20px;position:relative;font-size:14px;color:var(--muted);}
+ul.clean li::before{content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+ul.clean li b{color:var(--ink);font-weight:600;} del{color:var(--faint);}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 16px;font-family:"IBM Plex Mono",monospace;}
+@media (max-width:640px){.tiles{grid-template-columns:repeat(2,1fr);}.ev{grid-template-columns:1fr;}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">QA Verification &middot; OBS-UC086</div>
+  <h1>Rabet Product Catalog &mdash; test run</h1>
+  <p class="sub">Verification of the Rabet-only "Get Product Catalog Details" APIs against the story, the technical spec, and the twelve acceptance test cases &mdash; each executed live and dispositioned against its own expected result, with the eligibility mechanism reverse-engineered from the DB.</p>
+  <div class="meta">
+    <span class="chip">Story <b>OBS-8527</b></span>
+    <span class="chip">Spec <b>OBS-11391</b></span>
+    <span class="chip">Plan <b>OBS-11680</b></span>
+    <span class="chip">Cases <b>OBS-11681&ndash;11692</b></span>
+    <span class="chip">Bugs <b>OBS-11693&ndash;11696</b></span>
+    <span class="chip">Rabet app-Id <b>{{rabetAppId}}</b></span>
+    <span class="chip">Run <b>2026-09-14</b></span>
+  </div>
+</header>
+
+<div class="tiles">
+  <div class="tile pass"><div class="n">3</div><div class="l">Pass</div></div>
+  <div class="tile fail"><div class="n">7</div><div class="l">Fail</div></div>
+  <div class="tile ne"><div class="n">2</div><div class="l">Not&nbsp;evidenced</div></div>
+  <div class="tile total"><div class="n">12</div><div class="l">Cases executed</div></div>
+</div>
+
+<section>
+  <div class="callout win">
+    <b>Eligibility mechanism found.</b> Rabet eligibility is the <code>EnableRabetInquiry</code> setting in <code>{{TBL_SETTING}}</code> (<code>SET_VALUE=1</code>, keyed by product) &mdash; <b>not</b> an opaque 3scale-only gate as first believed. Proof: product <code>992</code> (flag=1, zero packages) returns <code>1193 "No packages found"</code> (eligible &amp; empty), while <code>199</code> (no flag) returns <code>1005 "The Application Not Exists"</code> (not eligible). So <code>1005</code>=ineligible; <code>1191</code>/<code>1193</code>=eligible-but-empty. A product can be made eligible by setting the flag (+ cache refresh).
+  </div>
+</section>
+
+<section>
+  <div class="sec-h"><h2>Evidence</h2><span class="k">rendered from the run &middot; screen locked</span></div>
+
+  <p class="tool-cap">01 &middot; Rabet package/list for 992 (EnableRabetInquiry=1, no packages) &rarr; eligible but empty</p>
+  <div class="tool">
+    <div class="tbar"><span class="app">Postman</span> &middot; GetPackagesList <span class="sp"><span class="st">200 OK</span> &middot; 721 B</span></div>
+    <div class="turl"><span class="verb">GET</span><span class="u">{{Billing_3scale}}/billing/v3/api/package/list</span> &middot; ProductCode: <b>992</b></div>
+    <div class="tbody">{
+  "header": { "productCode": "992", <span class="k">"status"</span>: <span class="e">1</span>, <span class="k">"errorsCount"</span>: 1 },
+  "body": {
+    <span class="k">"data"</span>: null,
+    <span class="k">"errors"</span>: [ { <span class="k">"key"</span>: <span class="e">"1193"</span>, <span class="k">"message"</span>: <span class="e">"No packages found for the given product."</span> } ]
+  }
+}</div>
+  </div>
+
+  <p class="tool-cap">02 &middot; The eligibility flag in {{TBL_SETTING}} (SSMS)</p>
+  <div class="tool">
+    <div class="tbar"><span class="app">SSMS</span> &middot; BPQA @ 10.207.0.99 <span class="sp"><span class="st">11 rows</span></span></div>
+    <table class="grid">
+      <thead><tr><th>SET_CODE</th><th>SET_VALUE</th><th>SET_REFERENCE</th></tr></thead>
+      <tbody>
+        <tr><td>EnableRabetInquiry</td><td>0</td><td>270</td></tr>
+        <tr><td>EnableRabetInquiry</td><td>0</td><td>700</td></tr>
+        <tr class="hi"><td>EnableRabetInquiry</td><td>1</td><td>992</td></tr>
+        <tr><td>EnableRabetInquiry</td><td>1</td><td>337</td></tr>
+        <tr><td>EnableRabetInquiry</td><td>1</td><td>346</td></tr>
+        <tr><td>EnableRabetInquiry</td><td>1</td><td>999000043</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="tool-cap">03 &middot; Services carry priceListItems[] on /service/list (TC-009 &mdash; the correct endpoint)</p>
+  <div class="tool">
+    <div class="tbar"><span class="app">Postman</span> &middot; GetServicesList <span class="sp"><span class="st">200 OK</span> &middot; 1.03 MB</span></div>
+    <div class="turl"><span class="verb">GET</span><span class="u">{{Billing_3scale}}/billing/v3/api/service/list</span> &middot; ProductCode: <b>999</b></div>
+    <div class="tbody">{
+  <span class="k">"serviceCode"</span>: <span class="s">"..."</span>, <span class="k">"serviceType"</span>: 1, <span class="k">"serviceTypeDesc"</span>: <span class="s">"Subscription"</span>,
+  <span class="k">"vatPercentage"</span>: 15.0, <span class="k">"priceListID"</span>: 33734, <span class="k">"priceListType"</span>: 2,
+  <span class="k">"priceListItems"</span>: [ { <span class="k">"price"</span>: 10.0, <span class="k">"sliceStartDate"</span>: <span class="s">"2024-10-01T00:00:00"</span> } ]
+}</div>
+  </div>
+
+  <p class="tool-cap">04 &middot; Empty package on 999 &rarr; error, not empty array (TC-011)</p>
+  <div class="tool">
+    <div class="tbar"><span class="app">Postman</span> &middot; GetServicesByPackage <span class="sp"><span class="st">200 OK</span> &middot; 721 B</span></div>
+    <div class="turl"><span class="verb">GET</span><span class="u">{{Billing_3scale}}/billing/v3/api/service/list/QA-RABET-EMPTY-011</span></div>
+    <div class="tbody">{ "header": { <span class="k">"status"</span>: <span class="e">1</span> }, "body": { <span class="k">"data"</span>: null,
+  <span class="k">"errors"</span>: [ { <span class="k">"key"</span>: <span class="e">"1191"</span>, <span class="k">"message"</span>: <span class="e">"No services found for the given product."</span> } ] } }</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h"><h2>Acceptance test results</h2><span class="k">12 cases</span></div>
+  <div class="rows">
+    <div class="row fail"><div class="row-top"><span class="tc">TC-001 &middot; 11681</span><span class="row-title">Products &mdash; bilingual names &amp; descriptions</span><span class="verdict fail">Fail</span></div>
+      <div class="ep">GET /billing/v3/api/product/list</div>
+      <div class="ev"><dt>Got</dt><dd><code>applicationCode / applicationNameEn / applicationNameAr / applicationDescEn / applicationDescAr</code></dd><dt>Want</dt><dd><code>productCode / productEnglishName / productArabicName / productAR_Description / productENG_Description</code></dd></div>
+      <div class="note">API matches OBS-11391; TC/UC086A say <code>product*</code> &mdash; docs conflict. &rarr; OBS-11696</div></div>
+
+    <div class="row fail"><div class="row-top"><span class="tc">TC-002 &middot; 11682</span><span class="row-title">Missing Product_Code &rarr; required error</span><span class="verdict fail">Fail</span></div>
+      <div class="ev"><dt>Got</dt><dd><code>5001 "ProductCode is missing in request Header"</code></dd><dt>Want</dt><dd>"ProductCode is required"</dd></div><div class="tagbug">OBS-11694</div></div>
+
+    <div class="row fail"><div class="row-top"><span class="tc">TC-003 &middot; 11683</span><span class="row-title">Length out of 3&ndash;9 rejected</span><span class="verdict fail">Fail</span></div>
+      <div class="ev"><dt>Got</dt><dd>len 2 &rarr; <code>5002 "ProductCode is invalid format"</code></dd><dt>Want</dt><dd>"ProductCode does not exist"</dd></div><div class="tagbug">OBS-11694</div></div>
+
+    <div class="row fail"><div class="row-top"><span class="tc">TC-004 &middot; 11684</span><span class="row-title">Non-existent Product_Code</span><span class="verdict fail">Fail</span></div>
+      <div class="ev"><dt>Got</dt><dd><code>1005 "The Application Not Exists"</code></dd><dt>Want</dt><dd>"ProductCode does not exist"</dd></div><div class="tagbug">OBS-11694</div></div>
+
+    <div class="row ne"><div class="row-top"><span class="tc">TC-005 &middot; 11685</span><span class="row-title">EnableRabetInquiry disabled &rarr; not-exist (E1)</span><span class="verdict ne">Concerns</span></div>
+      <div class="ev"><dt>Now known</dt><dd>Eligibility <b>is</b> the <code>EnableRabetInquiry</code> flag. A product without it (e.g. 199) &rarr; <code>1005</code> &mdash; the E1 "not-exist" behaviour holds; only the wording differs from the AC.</dd></div></div>
+
+    <div class="row ne"><div class="row-top"><span class="tc">TC-006 &middot; 11686</span><span class="row-title">Non-Rabet credentials rejected</span><span class="verdict ne">Not evidenced</span></div>
+      <div class="ev"><dt>Blocked</dt><dd>Needs a valid non-Rabet app credential. ClientKey validation works (<code>5008</code>), but it's the shared key; caller-identity gate unproven.</dd></div></div>
+
+    <div class="row pass"><div class="row-top"><span class="tc">TC-007 &middot; 11687</span><span class="row-title">Packages for eligible product</span><span class="verdict pass">Pass</span></div>
+      <div class="ev"><dt>Got</dt><dd><code>packageCode / packageEnglishName / packageArabicName / packageCreationDate</code> &mdash; matches.</dd></div></div>
+
+    <div class="row fail"><div class="row-top"><span class="tc">TC-008 &middot; 11688</span><span class="row-title">Product with no packages &rarr; empty array</span><span class="verdict fail">Fail</span></div>
+      <div class="ep">GET /package/list &middot; ProductCode 992 (EnableRabetInquiry=1, 0 packages)</div>
+      <div class="ev"><dt>Got</dt><dd><code>1193 "No packages found for the given product."</code> (error)</dd><dt>Want</dt><dd>HTTP 200 <code>"packages": []</code></dd></div>
+      <div class="note">Now testable thanks to the eligibility-flag discovery. Returns an error, not an empty array &mdash; same defect family as TC-011. Bug candidate.</div></div>
+
+    <div class="row pass"><div class="row-top"><span class="tc">TC-009 &middot; 11689</span><span class="row-title">Services with price-list items</span><span class="verdict pass">Pass</span></div>
+      <div class="ev"><dt>Got</dt><dd><code>/service/list</code> returns <code>priceListID / priceListType / priceListItems[]</code> (see evidence 03).</dd></div>
+      <div class="note">AC names <code>/service/details</code>+Package_ID; working endpoint is <code>/service/list/{packageId}</code>. Field <code>amountMultiplied</code> vs AC <code>isQuantitative</code>.</div></div>
+
+    <div class="row pass"><div class="row-top"><span class="tc">TC-010 &middot; 11690</span><span class="row-title">Package_ID null &rarr; all services</span><span class="verdict pass">Pass</span></div>
+      <div class="ev"><dt>Got</dt><dd><code>/service/list</code> (no packageId) returns all services (~1.03 MB).</dd></div></div>
+
+    <div class="row fail"><div class="row-top"><span class="tc">TC-011 &middot; 11691</span><span class="row-title">Package with no services &rarr; empty array</span><span class="verdict fail">Fail</span></div>
+      <div class="ev"><dt>Got</dt><dd><code>1191 "No services found for the given product."</code></dd><dt>Want</dt><dd><code>"services": []</code></dd></div>
+      <div class="note">Also: spec says <code>1180</code>; message says "product" for a package filter. &rarr; OBS-11693</div></div>
+
+    <div class="row fail"><div class="row-top"><span class="tc">TC-012 &middot; 11692</span><span class="row-title">Service with no price list &rarr; empty items</span><span class="verdict fail">Fail</span></div>
+      <div class="ev"><dt>Got</dt><dd>no-price service is <b>omitted</b> from the list</dd><dt>Want</dt><dd>service returned with <code>"priceListItems": []</code></dd></div>
+      <div class="note">Matches spec BR "one entry per service&times;price list" &mdash; conflicts with the AC. &rarr; OBS-11695</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h"><h2>Corrections this run</h2><span class="k">wrong endpoint / wrong KB</span></div>
+  <ul class="clean">
+    <li><del>No per-package services filter.</del> <b>Wrong endpoint</b> &mdash; it works on <code>/service/list/{packageId}</code>.</li>
+    <li><del>No <code>priceListItems[]</code>.</del> <b>Present</b> on <code>/service/list</code>.</li>
+    <li><del><code>EnableRabetInquiry</code> flag doesn't exist / eligibility is 3scale-only.</del> <b>The flag exists</b> in <code>{{TBL_SETTING}}</code> and drives eligibility (proven by 992). A product can be made eligible from the DB.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-h"><h2>Written to Jira</h2><span class="k">this run</span></div>
+  <div class="card">
+    <h3>12 execution comments + 4 bugs &mdash; posted &amp; verified</h3>
+    <p>An evidence comment was posted to each case OBS-11681&ndash;11692 (one each, verified). Four bugs filed, each <code>Blocks</code> the plan and links its case: <b>OBS-11693</b> (empty package &rarr; 1191), <b>OBS-11694</b> (product/list messages), <b>OBS-11695</b> (no-price service omitted), <b>OBS-11696</b> (field names). TC-008 (1193) is a new bug candidate.</p>
+  </div>
+</section>
+
+<footer>
+  <span>Env: payment-gw QA &middot; product 999 / 992</span>
+  <span>DB: BPQA @ 10.207.0.99</span>
+  <span>Tester: azzaibrahim</span>
+  <span>Evidence panels rendered from captured responses (live screen was locked).</span>
+</footer>
+</div>
